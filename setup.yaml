@@ -1,0 +1,80 @@
+---
+# Setup a basic Foreman/Puppet Environment using libvirt vagrant boxes
+# Recommended RAM >= 16GB
+
+- hosts: localhost
+  tasks:
+
+    - name: install dependencies
+      become: yes
+      become_method: sudo
+      dnf:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - git
+        - libvirt-daemon
+        - vagrant
+        - ruby-devel
+
+    - name: user permissions
+      become: yes
+      become_method: sudo
+      user:
+        name: "{{ansible_env.USER}}"
+        groups: libvirt,vagrant
+
+
+    - name: clone forklift
+      git:
+        repo: 'https://github.com/theforeman/forklift.git'
+        dest: "{{playbook_dir}}/forklift"
+        update: no
+
+    - name: copy boxes.yaml
+      copy: src="{{playbook_dir}}/boxes.yaml" dest="{{playbook_dir}}/forklift/boxes.yaml"
+
+    - name: Start the forman server
+      command: vagrant up devforeman
+      args:
+        chdir: "{{playbook_dir}}/forklift"
+      register: foreman_install
+
+    - name: ensure autosign is enabled for example domain
+      command: vagrant ssh -c "sudo grep example /etc/puppetlabs/puppet/autosign.conf" devforeman
+      args:
+        chdir: "{{playbook_dir}}/forklift"
+      ignore_errors: yes
+      register: filecheck
+
+    - name: enable autosign for *example.com
+      command: vagrant ssh -c "echo '*.example.com' | sudo tee -a /etc/puppetlabs/puppet/autosign.conf" devforeman
+      args:
+        chdir: "{{playbook_dir}}/forklift"
+      when: filecheck.rc == 1
+
+    - name: update smartproxy
+      command: vagrant ssh -c "sudo hammer proxy update --id 1" devforeman
+      args:
+        chdir: "{{playbook_dir}}/forklift"
+
+    - name: discover foreman ip
+      command: vagrant ssh -c "hostname -I | cut -d' ' -f1 2>/dev/null" devforeman
+      args:
+        chdir: "{{playbook_dir}}/forklift"
+      register: foreman_ip
+
+    - name: update foreman server ip in boxes.yaml
+      replace:
+        dest: "{{playbook_dir}}/forklift/boxes.yaml"
+        regexp: 'FOREMAN_IP'
+        replace: "{{foreman_ip.stdout}}"
+
+    - name: build centos puppet agents
+      command: vagrant up dev-c5 dev-c6 dev-c7
+      args:
+        chdir: "{{playbook_dir}}/forklift"
+
+
+    # - name: debug things
+    #   debug: msg=""

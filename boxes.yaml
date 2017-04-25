@@ -1,0 +1,46 @@
+devforeman:
+  box: centos7-foreman-1.15
+  synced_folders:
+    - mount_point: '/etc/puppetlabs/code/environments/development/modules'
+      path: <%= "#{ENV['HOME']}/workspace/puppet-modules" %>
+      options:
+        type: 'rsync'
+
+
+dev-c5:
+  box_name: wholebits/centos5-64
+  cpus: 1
+  memory: 512
+  shell: "rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-5.noarch.rpm; \
+    yum install -y puppet; \
+    echo 'FOREMAN_IP devforeman.example.com' >> /etc/hosts; \
+    puppet config set server devforeman.example.com --section agent; \
+    puppet config set environment development --section agent; \
+    puppet agent -t; \
+    chkconfig puppet on; \
+    service puppet start"
+
+dev-c6:
+  box: centos6
+  cpus: 1
+  memory: 512
+  shell: "rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm; \
+    yum install -y puppet; \
+    echo 'FOREMAN_IP devforeman.example.com' >> /etc/hosts; \
+    puppet config set server devforeman.example.com --section agent; \
+    puppet config set environment development --section agent; \
+    puppet agent -t; \
+    chkconfig puppet on; \
+    service puppet start"
+dev-c7:
+  box: centos7
+  cpus: 1
+  memory: 512
+  shell: "rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm; \
+    yum install -y puppet; \
+    echo 'FOREMAN_IP devforeman.example.com' >> /etc/hosts; \
+    puppet config set server devforeman.example.com --section agent; \
+    puppet config set environment development --section agent; \
+    puppet agent -t; \
+    systemctl enable puppet; \
+    systemctl start puppet"
