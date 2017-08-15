@@ -1,3 +1,13 @@
+# Puppet 3 based Foreman
+# (See: http://projects.theforeman.org/projects/foreman/wiki/Upgrading_from_Puppet_3_to_4)
+# devforeman:
+#   box: centos7-foreman-1.12
+#   synced_folders:
+#     - mount_point: '/etc/puppet/environments/development/modules'
+#       path: <%= "#{ENV['HOME']}/workspace/puppet-modules" %>
+#       options:
+#         type: 'rsync'
+
 devforeman:
   box: centos7-foreman-1.15
   synced_folders:
@@ -5,7 +15,6 @@ devforeman:
       path: <%= "#{ENV['HOME']}/workspace/puppet-modules" %>
       options:
         type: 'rsync'
-
 
 dev-c5:
   box_name: wholebits/centos5-64
@@ -32,6 +41,7 @@ dev-c6:
     puppet agent -t; \
     chkconfig puppet on; \
     service puppet start"
+
 dev-c7:
   box: centos7
   cpus: 1
