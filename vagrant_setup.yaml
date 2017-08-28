@@ -1,0 +1,98 @@
+---
+    - name: clone forklift
+      git:
+        repo: 'https://github.com/theforeman/forklift.git'
+        dest: "{{playbook_dir}}/forklift"
+        update: no
+
+    - name: copy boxes.yaml
+      copy: 
+        src: "{{playbook_dir}}/boxes.yaml" 
+        dest: "{{playbook_dir}}/forklift/boxes.yaml"
+
+    - name: update working path in boxes.yaml for auto sync
+      replace:
+        dest: "{{playbook_dir}}/forklift/boxes.yaml"
+        regexp: 'CHANGE_TO_WORK_DIR'
+        replace: "{{puppet_module_path}}"
+    
+    - name: update foreman version
+      replace:
+        dest: "{{playbook_dir}}/forklift/boxes.yaml"
+        regexp: 'CHANGE_TO_FOREMAN_VERSION'
+        replace: "{{foreman_version}}"
+
+    - name: set foreman module path in boxes.yaml
+      replace:
+        dest: "{{playbook_dir}}/forklift/boxes.yaml"
+        regexp: 'CHANGE_TO_FOREMAN_MODULE_PATH'
+        replace: "{{foreman_module_path}}"
+
+
+    - name: Start the forman server
+      command: vagrant up devforeman
+      args:
+        chdir: "{{playbook_dir}}/forklift"
+      register: foreman_install
+
+      # note, this usually will fail, that's ok, it just triggers the next step
+    - name: ensure autosign is enabled for example domain
+      command: vagrant ssh -c "sudo grep example {{ autosign_path }}/autosign.conf" devforeman
+      args:
+        chdir: "{{playbook_dir}}/forklift"
+      ignore_errors: yes
+      register: filecheck
+
+      # note, change the path for puppet 4 [ /etc/puppetlabs/puppet.... ]
+    - name: enable autosign for *example.com
+      command: vagrant ssh -c "echo '*.example.com' | sudo tee -a {{ autosign_path }}/autosign.conf" devforeman
+      args:
+        chdir: "{{playbook_dir}}/forklift"
+      when: filecheck.rc == 1
+
+    - name: update smartproxy
+      command: vagrant ssh -c "sudo hammer proxy update --id 1" devforeman
+      args:
+        chdir: "{{playbook_dir}}/forklift"
+
+    - name: discover foreman ip
+      command: vagrant ssh -c "hostname -I | cut -d' ' -f1 2>/dev/null" devforeman
+      args:
+        chdir: "{{playbook_dir}}/forklift"
+      register: foreman_ip
+
+    - name: update foreman server ip in boxes.yaml
+      replace:
+        dest: "{{playbook_dir}}/forklift/boxes.yaml"
+        regexp: 'FOREMAN_IP'
+        replace: "{{foreman_ip.stdout}}"
+
+    - name: discver foreman hostname
+      command: vagrant ssh -c "hostname --long 2>/dev/null" devforeman
+      args:
+        chdir: "{{playbook_dir}}/forklift"
+      register: foreman_hostname
+
+    - name: update foreman server hostname in boxes.yaml
+      replace:
+        dest: "{{playbook_dir}}/forklift/boxes.yaml"
+        regexp: 'FOREMAN_HOSTNAME'
+        replace: "{{foreman_hostname.stdout}}"
+
+    - name: build centos 5 puppet agents
+      command: vagrant up dev-c5
+      args:
+        chdir: "{{playbook_dir}}/forklift"
+      when: launch_centos_5_box
+
+    - name: build centos 6 puppet agents
+      command: vagrant up dev-c6
+      args:
+        chdir: "{{playbook_dir}}/forklift"
+      when: launch_centos_6_box
+
+    - name: build centos 7 puppet agents
+      command: vagrant up dev-c7
+      args:
+        chdir: "{{playbook_dir}}/forklift"
+      when: launch_centos_7_box
