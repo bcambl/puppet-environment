@@ -10,6 +10,7 @@
         - libvirt-daemon
         - vagrant
         - ruby-devel
+        - libselinux-python
 
     - name: user permissions
       become: yes
