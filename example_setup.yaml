@@ -1,0 +1,49 @@
+---
+# Setup a basic Foreman/Puppet Environment using libvirt vagrant boxes
+# Recommended RAM >= 16GB
+
+- hosts: localhost
+  vars:
+    ### Working Directory Setting
+    # set this to where you have your modules (tip: remove author from module names)
+    puppet_module_path: "{{ ansible_env.HOME }}/workspace/puppet-modules"
+    # set this to where foreman is expecting modules:
+
+    ## Foreman Settings for Puppet 3.x
+    #foreman_version: 1.12
+    #foreman_module_path: /etc/puppet/modules
+    #autosign_path: /etc/puppet
+    #puppet_agent_repo: puppetlabs-release-el
+    #puppet_agent_path: /usr/bin
+
+    ## Foreman Settings for Puppet 4.x
+    foreman_version: 1.15
+    foreman_module_path: '/etc/puppetlabs/code/environments/development/modules'
+    autosign_path: /etc/puppetlabs/puppet
+    puppet_agent_repo: puppetlabs-release-pc1-el
+    puppet_agent_path: /opt/puppetlabs/bin
+
+    ### Agent Box Control
+    # change to true if you want that agent to run
+    # NB, running all three means you should have 16GB RAM
+    launch_centos_5_box: false
+    launch_centos_6_box: false
+    launch_centos_7_box: true
+
+  tasks:
+    - name: verify work dir exists
+      stat:
+        path: "{{ puppet_module_path }}"
+      register: puppet_module_path_result
+
+      - include: dependency_setup.yaml
+      static: no
+      when: puppet_module_path_result.stat.exists
+
+    - include: vagrant_setup.yaml
+      static: no
+      when: puppet_module_path_result.stat.exists
+
+
+
+

@@ -28,6 +28,17 @@
         regexp: 'CHANGE_TO_FOREMAN_MODULE_PATH'
         replace: "{{foreman_module_path}}"
 
+    - name: set agent puppet repository in boxes.yaml
+      replace:
+        dest: "{{playbook_dir}}/forklift/boxes.yaml"
+        regexp: 'AGENT_REPOSITORY'
+        replace: "{{puppet_agent_repo}}"
+
+    - name: set puppet agent path in boxes.yaml
+      replace:
+        dest: "{{playbook_dir}}/forklift/boxes.yaml"
+        regexp: 'AGENT_PATH'
+        replace: "{{puppet_agent_path}}"
 
     - name: Start the forman server
       command: vagrant up devforeman

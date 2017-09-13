@@ -6,12 +6,13 @@ _16+ GB RAM Recommended_ for full deployment
 ## Things to check before running script
 1. Virtualisation settings (BIOS)for your desktop
     * mine were disabled by default
-2. The working directory for modules
+2. Rename example_setup.yaml to setup.yaml
+3. Set the working directory for modules
     * change the setting at the top of the setup.yaml file
     * the playbook will fail if it is missing
-3. Set your version for foreman and uncomment the appropriate path variables in the setup.yaml
+4. Set your version for foreman and uncomment the appropriate path variables in the setup.yaml
     * repo default is version 1.12, which is Puppet 3 compatible
-4. Enable extra agents if required
+5. Enable extra agents if required
     * repo default is just a centos7 version
     
 ## Run script

@@ -20,8 +20,9 @@ dev-c5:
   box_name: wholebits/centos5-64
   cpus: 1
   memory: 512
-  shell: "rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-5.noarch.rpm; \
+  shell: "rpm -ivh http://yum.puppetlabs.com/AGENT_REPOSITORY-5.noarch.rpm; \
     yum install -y puppet; \
+    export PATH=$PATH:AGENT_PATH; \
     echo 'FOREMAN_IP FOREMAN_HOSTNAME' >> /etc/hosts; \
     puppet config set server FOREMAN_HOSTNAME --section agent; \
     puppet config set environment development --section agent; \
@@ -33,8 +34,9 @@ dev-c6:
   box: centos6
   cpus: 1
   memory: 512
-  shell: "rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm; \
+  shell: "rpm -ivh http://yum.puppetlabs.com/AGENT_REPOSITORY-6.noarch.rpm; \
     yum install -y puppet; \
+    export PATH=$PATH:AGENT_PATH; \
     echo 'FOREMAN_IP FOREMAN_HOSTNAME' >> /etc/hosts; \
     puppet config set server FOREMAN_HOSTNAME --section agent; \
     puppet config set environment development --section agent; \
@@ -46,8 +48,9 @@ dev-c7:
   box: centos7
   cpus: 1
   memory: 512
-  shell: "rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm; \
+  shell: "rpm -ivh http://yum.puppetlabs.com/AGENT_REPOSITORY-7.noarch.rpm; \
     yum install -y puppet; \
+    export PATH=$PATH:AGENT_PATH; \
     echo 'FOREMAN_IP FOREMAN_HOSTNAME' >> /etc/hosts; \
     puppet config set server FOREMAN_HOSTNAME --section agent; \
     puppet config set environment development --section agent; \
