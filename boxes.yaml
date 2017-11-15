@@ -32,6 +32,9 @@ dev-c5:
     echo 'baseurl=http://vault.centos.org/5.11/updates/$basearch/' >> /etc/yum.repos.d/CentOS-Base.repo; \
     echo 'gpgcheck=1' >> /etc/yum.repos.d/CentOS-Base.repo; \
     echo 'gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5' >> /etc/yum.repos.d/CentOS-Base.repo; \
+    rm -f /etc/localtime; \
+    ln -s /usr/share/zoneinfo/UTC /etc/localtime; \
+    date -s \"$(curl -I google.com 2>&1 | grep Date: | cut -d' ' -f3-6)Z\"; \
     yum install -y puppet; \
     export PATH=$PATH:AGENT_PATH; \
     echo 'FOREMAN_IP FOREMAN_HOSTNAME' >> /etc/hosts; \
@@ -46,6 +49,9 @@ dev-c6:
   cpus: 1
   memory: 512
   shell: "rpm -ivh http://yum.puppetlabs.com/AGENT_REPOSITORY-6.noarch.rpm; \
+    rm -f /etc/localtime; \
+    ln -s /usr/share/zoneinfo/UTC /etc/localtime; \
+    date -s \"$(curl -I google.com 2>&1 | grep Date: | cut -d' ' -f3-6)Z\"; \
     yum install -y puppet; \
     export PATH=$PATH:AGENT_PATH; \
     echo 'FOREMAN_IP FOREMAN_HOSTNAME' >> /etc/hosts; \
@@ -60,6 +66,9 @@ dev-c7:
   cpus: 1
   memory: 512
   shell: "rpm -ivh http://yum.puppetlabs.com/AGENT_REPOSITORY-7.noarch.rpm; \
+    rm -f /etc/localtime; \
+    ln -s /usr/share/zoneinfo/UTC /etc/localtime; \
+    date -s \"$(curl -I google.com 2>&1 | grep Date: | cut -d' ' -f3-6)Z\"; \
     yum install -y puppet; \
     export PATH=$PATH:AGENT_PATH; \
     echo 'FOREMAN_IP FOREMAN_HOSTNAME' >> /etc/hosts; \
@@ -85,6 +94,9 @@ dev-c5p3:
     echo 'baseurl=http://vault.centos.org/5.11/updates/$basearch/' >> /etc/yum.repos.d/CentOS-Base.repo; \
     echo 'gpgcheck=1' >> /etc/yum.repos.d/CentOS-Base.repo; \
     echo 'gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5' >> /etc/yum.repos.d/CentOS-Base.repo; \
+    rm -f /etc/localtime; \
+    ln -s /usr/share/zoneinfo/UTC /etc/localtime; \
+    date -s \"$(curl -I google.com 2>&1 | grep Date: | cut -d' ' -f3-6)Z\"; \
     yum install -y puppet; \
     export PATH=$PATH:AGENT_PATH; \
     echo 'FOREMAN_IP FOREMAN_HOSTNAME' >> /etc/hosts; \
@@ -99,6 +111,9 @@ dev-c6p3:
   cpus: 1
   memory: 512
   shell: "rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm; \
+    rm -f /etc/localtime; \
+    ln -s /usr/share/zoneinfo/UTC /etc/localtime; \
+    date -s \"$(curl -I google.com 2>&1 | grep Date: | cut -d' ' -f3-6)Z\"; \
     yum install -y puppet; \
     export PATH=$PATH:AGENT_PATH; \
     echo 'FOREMAN_IP FOREMAN_HOSTNAME' >> /etc/hosts; \
@@ -113,6 +128,9 @@ dev-c7p3:
   cpus: 1
   memory: 512
   shell: "rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm; \
+    rm -f /etc/localtime; \
+    ln -s /usr/share/zoneinfo/UTC /etc/localtime; \
+    date -s \"$(curl -I google.com 2>&1 | grep Date: | cut -d' ' -f3-6)Z\"; \
     yum install -y puppet; \
     export PATH=$PATH:AGENT_PATH; \
     echo 'FOREMAN_IP FOREMAN_HOSTNAME' >> /etc/hosts; \
