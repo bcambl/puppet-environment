@@ -12,6 +12,15 @@
         - ruby-devel
         - libselinux-python
 
+    - name: install vagrant plugins
+      command: vagrant plugin install vagrant-mutate
+
+    - name: download a centos-5 image
+      command: vagrant box add hfm4/centos5
+
+    - name: mutate a centos-5 image to libvirt provider
+      command: vagrant mutate hfm4/centos5 libvirt
+
     - name: user permissions
       become: yes
       become_method: sudo
